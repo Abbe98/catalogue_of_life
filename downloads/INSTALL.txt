@@ -1,0 +1,96 @@
+The Annual Checklist Interface is built on version 1.9.5 of the Zend Framework.
+Please visit http://framework.zend.com for more information.
+
+SYSTEM REQUIREMENTS
+====================
+PHP  
+  Required version: 5.2.10+
+
+  * Extensions:
+    ctype   (http://www.php.net/manual/en/ref.ctype.php)
+    json    (http://www.php.net/manual/en/ref.json.php)
+    mysqli  (http://www.php.net/manual/en/ref.mysqli.php)
+    pcre    (http://www.php.net/manual/en/ref.pcre.php)
+    session (http://www.php.net/manual/en/ref.session.php)
+  
+MySQL
+  Required version: 5.5.3+
+
+Apache
+  Required version: 2.0+
+
+  * Modules:
+    mod_rewrite (http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html)
+    
+
+INSTALLATION
+=============
+1. Setup the database by executing the following lines in the Terminal
+
+	$ mysql -u root -e 'CREATE DATABASE IF NOT EXISTS col2015ac';
+	$ tar zxvf col2015ac.sql.tar.gz
+	$ mysql -u root col2015ac < col2015ac.sql	
+
+	Use the following command to remove the uncompressed SQL file:
+	
+	$ rm col2015ac.sql
+
+2. Deploy the application
+
+   Uncompress col2015ac_application.tar.gz file and copy the extracted col2015ac 
+   directory into the root folder of the web server.
+
+3. Set up permissions
+
+   Create folder col2015ac/application/cache
+   The web server has to have read access to all the files and read-write 
+   access to the following folders:
+
+   col2015ac/application/cache --> Cached query results are stored here.
+   col2015ac/application/log   --> Any error that may occur is logged here
+   
+   Example (assuming that the web server user:group is www-data:www-data): 
+   
+   $ chown -R www-data:www-data col2015ac
+   $ chmod -R 777 col2015ac
+
+4. Configure the application
+
+   Edit the file col2015ac/application/configs/config.ini to set the 
+   database connection paramters and the Google Analytics tracker id (if any, 
+   otherwise leave it empty):
+
+   [standalone]
+   # Database
+   database.params.port     = 3306
+   database.params.host     = localhost
+   database.params.username = here-your-MySQL-username
+   database.params.password = here-your-MySQL-password
+   database.params.dbname   = here-the-name-of-the-db (col2015ac in the example 
+                              above)
+   Remember that the database name is case sensitive. (col2015ac is NOT CoL2015AC)
+5. Configure Apache
+
+       5.1. Make sure that the rewrite module is enabled.
+            $ (sudo) a2enmod rewrite
+
+       5.2. Create an alias inside the Apache VirtualHost in port 80 that points 
+            to the *public* folder of the application.
+   
+       Example:
+   
+               Alias /col2015ac "/col2015ac/public/"
+               <Directory "/col2015ac/public/">
+                   Options Indexes MultiViews FollowSymLinks
+                   AllowOverride FileInfo Options
+                   Order allow,deny
+                   Allow from all
+               </Directory>
+
+       Remember that the file system in Linux is case sensitive (col2015ac is NOT CoL2015AC).
+
+       Finally, restart Apache to have the changes applied. 
+   
+   NOTE: If the application does not load as expected, checking the Apache logs 
+   may help to identify the problem (the Apache 2 error log file is typically 
+   located in /var/log/apache2/error.log).
