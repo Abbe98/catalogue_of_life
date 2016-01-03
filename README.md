@@ -184,9 +184,15 @@ Lager modeller og ressurser:
     $ rails g model CommonName --parent=NamedObject
     $ rails g model Name --parent=NamedObject
     $ rails g model Rank --parent=NamedObject
-    $ rails g resource Taxon scientific_name:string
+    $ rails g resource Taxon scientific_name:string col_taxon_id:integer
+    $ rails g model Species --parent=Taxon
     $ rails g resource Taxonomy
 
 Redigerer migreringene og kjører: 
 
     $ rake db:migrate
+
+Importere data fra COL (alle kingdoms og så chordata (ryggstrengdyr)): 
+
+    $ rake col:import_top_levels
+    $ rake col:import[22032976]
