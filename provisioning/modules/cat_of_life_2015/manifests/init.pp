@@ -19,7 +19,7 @@ class cat_of_life_2015 {
   }
 
   exec {'create-database':
-      command => 'mysql -u root -e "create database if not exists col2015ac"',
+      command => 'mysql -u root -phemmelig -e "create database if not exists col2015ac"',
       require => [Service["mysql"], Exec["get-col"]]
   }
 
@@ -89,6 +89,12 @@ class cat_of_life_2015 {
       source  => 'puppet:///modules/cat_of_life_2015/httpd-vhosts.conf',
       require => Exec["unpack-app"],
       notify => Service["httpd"]
+  }
+  
+  exec { "secure-mariadb":
+    command => "/vagrant/provisioning/modules/mariadb/files/mysql-autosecure.sh hemmelig",
+    require => Exec["import"],
+    unless => "ls `which mysql_secure_installation`.ran"
   }
 
       

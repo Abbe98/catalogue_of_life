@@ -6,7 +6,7 @@ class mariadb {
     source  => 'puppet:///modules/mariadb/mariadb.repo'
   }
 
-  package { ['MariaDB-server', 'MariaDB-client']:
+  package { ['MariaDB-server', 'MariaDB-client', "expect"]:
     ensure => present,
     require => [File['/etc/yum.repos.d/mariadb.repo'],Package["epel-release"]]
   }
