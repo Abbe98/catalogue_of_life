@@ -1,0 +1,15 @@
+
+    <% for taxon in taxa do%>
+    <li >
+      <span id=<%="taxon_link_#{taxon.id}"%>>      
+        <%="#{taxon.ranks.first.rank}: "%>
+        <% if taxon.is_a? Species %>
+          <p><%="%s (%s)" % [taxon.common_name("eng"), taxon.binomial_name]%> </p>
+        <% else %>
+          <%=link_to taxon.taxon_scientific_name, subtree_taxon_path(taxon.id), remote: true%>
+        <% end %>
+      </span>
+      <ul id=<%="taxon_ul_#{taxon.id}"%>></ul>
+    </li>
+    <% end %>
+

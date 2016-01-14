@@ -1,0 +1,13 @@
+
+var clear = function() {
+  jQuery(this).parent().parent().children('ul').empty();
+  jQuery(this).remove();
+}
+
+item = '<span id="close_subtree_taxon_<%=@taxon.id%>">-</span>'
+if ( !$( "#close_subtree_taxon_<%=@taxon.id%>" ).length ) {
+  $("#taxon_link_<%=@taxon.id%>").append(jQuery(item).click(clear).css({cursor:'pointer', display:'inline-block', width:'1em'}));
+}
+
+$("#taxon_ul_<%=@taxon.id%>").html('<%= escape_javascript(render partial: "subtree", locals: {taxa: @taxon.children}) %>');
+//alert($("#taxon_div_<%=@taxon.id%>"));

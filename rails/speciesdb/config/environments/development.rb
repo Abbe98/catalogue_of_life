@@ -35,7 +35,10 @@ Rails.application.configure do
   # Checks for improperly declared sprockets dependencies.
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
-
+  
+  # Bjorn: added this:
+  config.reload_classes_only_on_change = false
+  
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 end

@@ -14,8 +14,8 @@ After this, Catalogue of Life: 2015 Annual Checklist will be installed and avail
 ## database
 To browse the database: 
 
-    $ cd /vagrant/sql
     $ vagrant ssh
+    $ cd /vagrant/sql
     [vagrant@localhost ~]$ mysql -u root col2015ac
     Reading table information for completion of table and column names
     You can turn off this feature to get a quicker startup with -A
@@ -173,7 +173,7 @@ Oppretter bruker i MariaDB:
     MariaDB [(none)]> grant all on *.* to 'speciesdb'@'localhost';
     Query OK, 0 rows affected (0.00 sec)    
 
-Legger til MariaDB brukernavn (speciesdb) og passord (password) i config/database.yml og kjører kommando for å opprette databaser: 
+Legger til MariaDB brukernavn (speciesdb) og passord (passord) i config/database.yml og kjører kommando for å opprette databaser: 
 
     $ rake db:create
 
@@ -196,3 +196,10 @@ Importere data fra COL (alle kingdoms og så chordata (ryggstrengdyr)):
 
     $ rake col:import_top_levels
     $ rake col:import[22032976]
+
+## Starte Rails
+
+Kan starte rails slik: 
+
+    $ cd /vagrant/rails/
+    $ rails s -b 0.0.0.0

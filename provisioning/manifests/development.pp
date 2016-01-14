@@ -79,5 +79,6 @@ node default {
  include mariadb 
  include cat_of_life_2015
  include rails
+ include es
  
 }
