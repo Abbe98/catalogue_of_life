@@ -7,54 +7,80 @@ module Searchable
     include Elasticsearch::Model
     
     index_name 'taxa'
-=begin    
+   
     # http://stackoverflow.com/questions/25392300/rails-4-elasticsearch-rails
     settings index: { 
       number_of_shards: 1,
       analysis: {
-        filter: {
-          trigrams_filter: {
-            type: 'ngram',
-            min_gram: 2,
-            max_gram: 10
-          },
-          content_filter: {
-            type: 'ngram',
-            min_gram: 4,
-            max_gram: 20
+        analyzer: {
+          my_ngram_analyzer: {
+            tokenizer: "my_ngram_tokenizer",
+            filter: ['lowercase']
           }
         },
-        analyzer: {
-          index_trigrams_analyzer: {
-            type: 'custom',
-            tokenizer: 'standard',
-            filter: ['lowercase', 'trigrams_filter']
-          },
-          search_trigrams_analyzer: {
-            type: 'custom',
-            tokenizer: 'whitespace',
-            filter: ['lowercase']
-          },
-          english: {
-            tokenizer: 'standard',
-            filter: ['standard', 'lowercase', 'content_filter']
+        tokenizer: {
+          my_ngram_tokenizer: {
+            type: "nGram",
+            min_gram: "1",
+            max_gram: "20",
+            token_chars: [:letter, :digit]
           }
         }
-      } 
-    }
-=end    
-    settings index: { 
-      number_of_shards: 1,
-      }     do
-      mapping do
-        indexes :species, type: 'multi_field' do
-          indexes :tokenized, analyzer: 'simple'
+        }
+        } do     
+          # mappings dynamic: 'false' do
+          #  indexes :scientific_name, analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
+          #  indexes "common_names.name", analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
+          # end
+          mappings do
+           indexes :scientific_name, analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
+           indexes :common_names do
+              indexes :name, analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
+            end
+          end
         end
-      end
-      # mappings dynamic: 'false' do
-      #   indexes :title, analyzer: 'english', index_options: 'offsets'
-      # end
-    end
+        # filter: {
+        #   trigrams_filter: {
+        #     type: 'ngram',
+        #     min_gram: 2,
+        #     max_gram: 10
+        #   },
+        #   content_filter: {
+        #     type: 'ngram',
+        #     min_gram: 4,
+        #     max_gram: 20
+        #   }
+        # },
+        # analyzer: {
+        #   index_trigrams_analyzer: {
+        #     type: 'custom',
+        #     tokenizer: 'standard',
+        #     filter: ['lowercase', 'trigrams_filter']
+        #   },
+        #   search_trigrams_analyzer: {
+        #     type: 'custom',
+        #     tokenizer: 'whitespace',
+        #     filter: ['lowercase']
+        #   },
+        #   english: {
+        #     tokenizer: 'standard',
+        #     filter: ['standard', 'lowercase', 'content_filter']
+        #   }
+        # }
+
+    #
+    # settings index: {
+    #   number_of_shards: 1,
+    #   }     do
+    #   mapping do
+    #     indexes :species, type: 'multi_field' do
+    #       indexes :tokenized, analyzer: 'simple'
+    #     end
+    #   end
+    #   # mappings dynamic: 'false' do
+    #   #   indexes :title, analyzer: 'english', index_options: 'offsets'
+    #   # end
+    # end
     
 
     
@@ -82,12 +108,11 @@ module Searchable
       unless query.blank?
         @search_definition[:query] = {
           bool: {
-            should: [
+            must: [
               { multi_match: {
                   query: query,
                   # limit which fields to search, or boost here:
-                  fields: [ "scientific_name", "common_names.name" ],
-                  operator: 'and'
+                  fields: [ "scientific_name", "common_names.name" ]
                 }
               }
             ]

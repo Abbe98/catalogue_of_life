@@ -43,6 +43,7 @@ class AutocompleteController < ApplicationController
       format.json { 
         puts "------------"
         #map = species.map{|s| [s.navn,s.picture_url] }
+        puts es_result.size
         map = es_result.results.map do |s| 
           hl = s.highlight
           src = s._source

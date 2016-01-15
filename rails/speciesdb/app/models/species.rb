@@ -3,6 +3,8 @@ class Species < Taxon
   
   include Searchable
   
+  scope :one, -> { where slug: 'soriculus-nigrescens' }
+  
   def scientific_name
     binomial_name
   end

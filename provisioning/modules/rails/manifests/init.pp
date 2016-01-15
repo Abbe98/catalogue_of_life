@@ -19,7 +19,13 @@ class rails {
     command => "firewall-cmd --zone=public --add-port=3000/tcp --permanent && firewall-cmd --reload",
     unless => "firewall-cmd --query-port=3000/tcp"
   }
-    
+
+  
+  exec {'create-dbuser':
+      command => 'mysql -u root -phemmelig -e "grant all on *.* to \'speciesdb\'@\'localhost\' identified by \'passord\'"',
+      require => [Exec["secure-mariadb"]]
+  }
+
   # package { ["mysql2"]:
   #   ensure => 'installed',
   #   provider => gem,

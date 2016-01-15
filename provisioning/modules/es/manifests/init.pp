@@ -4,14 +4,25 @@ class es {
     exec {"es":
       command => "rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch"
     }
-  
-    file {"/etc/yum.repos.d/elasticsearch.repo":
-      source => "puppet:///modules/es/elasticsearch.repo"
+    
+    exec {"es-key":
+       command => "rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch"
     }
   
+    file {"/etc/elasticsearch/elasticsearch.yml":
+      source => "puppet:///modules/es/elasticsearch.yml",
+      require => Package["elasticsearch"],
+      notify => Service["elasticsearch"]
+    }
+    
+    file {"/etc/yum.repos.d/elasticsearch.repo":
+      source => "puppet:///modules/es/elasticsearch.repo",
+      require => Exec["es-key"]
+    }
+      
     package {["java-1.8.0-openjdk", "elasticsearch"]: 
        ensure => present, 
-       require => [Exec["es"], File["/etc/yum.repos.d/elasticsearch.repo"]],
+       require => [Exec["es"], File["/etc/yum.repos.d/elasticsearch.repo"], File],
        provider => 'yum'
    }
  
@@ -19,11 +30,21 @@ class es {
      command => "chkconfig --add elasticsearch && chkconfig elasticsearch on",
      require => Package["elasticsearch"]
    }
-
-   exec { "allow access to port 9201":
-     command => "firewall-cmd --permanent --zone=public --add-port=9200/tcp && firewall-cmd --reload",
+   
+   service {"elasticsearch":
+     ensure => running,
+     require => Exec["es-automatisk-start"]
    }
 
+   
+   
+   exec { "allow access to port 9200":
+     command => "firewall-cmd --permanent --zone=public --add-port=9200/tcp && firewall-cmd --reload",
+   }
+   exec { "allow access to port 5601":
+     command => "firewall-cmd --permanent --zone=public --add-port=5601/tcp && firewall-cmd --reload",
+   }
+   
    # Trenger ikke denne siden selinux er disabled
    # exec {"selinux":
    #   command => "setsebool -P httpd_can_network_connect 1"
@@ -51,6 +72,11 @@ class es {
      require => File["/etc/systemd/system/kibana4.service"]
    }
    
+   Exec {"kibana-sense":
+     command => "/opt/kibana plugin --install elastic/sense",
+     require => Service["kibana4"],
+     notify => "kibana4"
+   }
        
 }
 

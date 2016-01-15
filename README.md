@@ -162,33 +162,17 @@ Lager en Ruby on Rails app for å bygge Biocaching artsdatabase.
     $ cd speciesdb
 
 
-Oppretter bruker i MariaDB:
+Databasebruker for rails (speciesdb) skal ha blitt opprettet i MariaDB.
 
-    $ mysql -u root -p
-    Password: 
-    
-    MariaDB [(none)]> create user 'speciesdb'@'localhost' identified by 'passord';
-    Query OK, 0 rows affected (0.00 sec)
-    
-    MariaDB [(none)]> grant all on *.* to 'speciesdb'@'localhost';
-    Query OK, 0 rows affected (0.00 sec)    
+Installerer gems: 
 
-Legger til MariaDB brukernavn (speciesdb) og passord (passord) i config/database.yml og kjører kommando for å opprette databaser: 
+    $ bundle install
+
+Kjører kommando for å opprette databaser: 
 
     $ rake db:create
 
-
-Lager modeller og ressurser:
-
-    $ rails g model NamedObject name:string language_iso:string
-    $ rails g model CommonName --parent=NamedObject
-    $ rails g model Name --parent=NamedObject
-    $ rails g model Rank --parent=NamedObject
-    $ rails g resource Taxon scientific_name:string col_taxon_id:integer
-    $ rails g model Species --parent=Taxon
-    $ rails g resource Taxonomy
-
-Redigerer migreringene og kjører: 
+Kjører migreringer: 
 
     $ rake db:migrate
 
@@ -197,9 +181,19 @@ Importere data fra COL (alle kingdoms og så chordata (ryggstrengdyr)):
     $ rake col:import_top_levels
     $ rake col:import[22032976]
 
+Indeksere ett artsnavn i Elasticsearch:
+
+    $ rake es:import_one
+
+Indeksere alle artsnavn i Elasticsearch: 
+
+    $ rake es:import
+
 ## Starte Rails
 
 Kan starte rails slik: 
 
     $ cd /vagrant/rails/
     $ rails s -b 0.0.0.0
+
+Og åpne railsapplikasjonen på denne adressen http://localhost:3000

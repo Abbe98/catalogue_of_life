@@ -17,14 +17,20 @@ class cat_of_life_2015 {
     creates => "/home/vagrant/downloads/col2015ac_linux.tar.gz",
     require => File["downloads"]
   }
-
+  
+  exec { "secure-mariadb":
+    command => "/vagrant/provisioning/modules/mariadb/files/mysql-autosecure.sh hemmelig",
+    require => Service["mysql"],
+    unless => "ls `which mysql_secure_installation`.ran"
+  }
+  
   exec {'create-database':
       command => 'mysql -u root -phemmelig -e "create database if not exists col2015ac"',
-      require => [Service["mysql"], Exec["get-col"]]
+      require => [Exec["secure-mariadb"], Exec["get-col"]]
   }
 
   exec {'import':
-      command => 'tar zxvf /home/vagrant/downloads/col2015ac.sql.tar.gz -C /home/vagrant/downloads && mysql -u root col2015ac < /home/vagrant/downloads/col2015ac.sql',
+      command => 'tar zxvf /home/vagrant/downloads/col2015ac.sql.tar.gz -C /home/vagrant/downloads && mysql -u root -phemmelig col2015ac < /home/vagrant/downloads/col2015ac.sql',
       user => "vagrant",
       group => "vagrant",
       timeout => 3600,
@@ -89,12 +95,6 @@ class cat_of_life_2015 {
       source  => 'puppet:///modules/cat_of_life_2015/httpd-vhosts.conf',
       require => Exec["unpack-app"],
       notify => Service["httpd"]
-  }
-  
-  exec { "secure-mariadb":
-    command => "/vagrant/provisioning/modules/mariadb/files/mysql-autosecure.sh hemmelig",
-    require => Exec["import"],
-    unless => "ls `which mysql_secure_installation`.ran"
   }
 
       

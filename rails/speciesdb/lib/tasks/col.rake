@@ -117,7 +117,8 @@ namespace :col do
            s.save
            #puts "Saved one species, will exit"
            puts s.scientific_name
-           #exit
+           
+           exit
          end
        else
          t = new_taxon(taxon_scientific_name, taxon_id, rank, parent)
