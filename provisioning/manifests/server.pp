@@ -43,17 +43,6 @@ node default {
     require => Class["timezone"]
   }  
    
-  # installerer Oracle først siden den trenger tid til å starte før jeg kan opprette bruker, osv. 
-  # class { "oracle":
-  #   db_user => "iknowbase",
-  #   db_password => "hemmelig"
-  # }
-
-  #include httpd
-
-#  class { "solr5": 
-#    version => "5.2.1" 
-#  }
   
  include httpd 
  # include mariadb

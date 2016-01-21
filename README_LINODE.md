@@ -100,15 +100,25 @@ Velger å også enable firewalld:
 
 ## Installasjoner
 
-### Ruby og puppet
+### Ruby, puppet, git, osv...
 
     $ sudo yum install ruby
     $ sudo rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
-    $ sudo yum install puppet    
+    $ sudo yum install puppet
+    $ sudo yum install git    
 
-# Kopierer over Catalogue of Life prosjektet
+# Kloner Catalogue of Life prosjektet fra git
 
+Logget inn som bjorn på bc1: 
+
+    $ git clone https://github.com/Biocaching/catalogue_of_life.git
+    $ sudo puppet apply catalogue_of_life/provisioning/manifests/server.pp \
+         --modulepath catalogue_of_life/provisioning/modules
+    
+    
+    
 Fra egen laptop: 
 
     $ pwd
-    $ rsync -ac
+    /Users/bjorn/Documents/projects/biocaching
+    $ rsync -av catalogueoflife bjorn@bc:.
