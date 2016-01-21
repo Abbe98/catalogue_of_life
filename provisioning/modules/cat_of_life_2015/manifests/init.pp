@@ -19,7 +19,7 @@ class cat_of_life_2015 {
   }
   
   exec { "secure-mariadb":
-    command => "/home/bc/catalogue_of_life/provisioning/modules/mariadb/files/mysql-autosecure.sh hemmelig",
+    command => "sh /home/bc/catalogue_of_life/provisioning/modules/mariadb/files/mysql-autosecure.sh hemmelig",
     require => Service["mysql"],
     unless => "ls `which mysql_secure_installation`.ran"
   }
