@@ -6,39 +6,55 @@ module Searchable
   included do
     include Elasticsearch::Model
     
-    index_name 'taxa'
-   
-    # http://stackoverflow.com/questions/25392300/rails-4-elasticsearch-rails
-    settings index: { 
-      number_of_shards: 1,
-      analysis: {
-        analyzer: {
-          my_ngram_analyzer: {
-            tokenizer: "my_ngram_tokenizer",
-            filter: ['lowercase']
-          }
-        },
-        tokenizer: {
-          my_ngram_tokenizer: {
-            type: "nGram",
-            min_gram: "1",
-            max_gram: "20",
-            token_chars: [:letter, :digit]
-          }
-        }
-        }
-        } do     
-          # mappings dynamic: 'false' do
-          #  indexes :scientific_name, analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
-          #  indexes "common_names.name", analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
-          # end
-          mappings do
-           indexes :scientific_name, analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
-           indexes :common_names do
-              indexes :name, analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
-            end
-          end
-        end
+    # Oppretter heller indeksen vha script/recreate_es_index.sh
+    
+    # index_name 'taxa'
+    #
+    # # http://stackoverflow.com/questions/25392300/rails-4-elasticsearch-rails
+    # settings index: {
+    #   number_of_shards: 1,
+    #   analysis: {
+    #     analyzer: {
+    #       my_ngram_analyzer: {
+    #         tokenizer: "my_ngram_tokenizer",
+    #         filter: ['lowercase']
+    #       }
+    #     },
+    #     tokenizer: {
+    #       my_ngram_tokenizer: {
+    #         type: "nGram",
+    #         min_gram: "2",
+    #         max_gram: "20",
+    #         token_chars: [:letter, :digit]
+    #       }
+    #     }
+    #     }
+    #     } do
+    #       # mappings dynamic: 'false' do
+    #       #  indexes :scientific_name, analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
+    #       #  indexes "common_names.name", analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
+    #       # end
+    #       mappings do
+    #         indexes :scientific_name, analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
+    #         indexes :common_names do
+    #           indexes :name, analyzer: 'my_ngram_analyzer', search_analyzer: 'simple'
+    #         end
+    #         indexes :slug, index: :not_analyzed
+    #         indexes :kingdom, index: :not_analyzed
+    #         indexes :id, index: :not_analyzed
+    #         indexes :col_taxon_id, index: :not_analyzed
+    #         indexes :taxonomy do
+    #           indexes :slug, index: :not_analyzed
+    #         end
+    #         indexes :ranks do
+    #           indexes :rank, index: :not_analyzed
+    #           indexes :language_iso, index: :not_analyzed
+    #         end
+    #         # dynamic_templates do
+    #         # end
+    #       end
+    #     end
+        
         # filter: {
         #   trigrams_filter: {
         #     type: 'ngram',
@@ -88,20 +104,55 @@ module Searchable
     # ref http://ericlondon.com/2014/09/02/rails-4-elasticsearch-integration-with-dynamic-facets-and-filters-via-model-concern.html
     #
     def as_indexed_json(options={})
-      hash = self.as_json(only: [:binomial_name, :slug, :col_taxon_id, :id], 
-                          methods: [:scientific_name],
-                          include: { common_names:{only: [:name, :language_iso] }})
+      hash = self.as_json(only: [:taxon_scientific_name, :slug, :col_taxon_id, :id, :parent_id], 
+                          methods: [:scientific_name, :kingdom, :taxonomic_ranks],
+                          include: { common_names:{only: [:name, :language_iso]},
+                                     ranks:       {only: [:rank, :language_iso]},
+                                     taxonomy: {only: :slug}})
       #hash['species'] = self.species.map(&:title)
       hash
     end
     
-    def self.search(query)
-      options ||= {}
+    def self.search(query, options={})
+      #options ||= {}
+      
+      term_filter = {}
+      filters = []
+      if options[:below_rank].present? && options[:below_rank_value].present?
+        filters << {term: {"taxonomic_ranks.#{options[:below_rank]}" => options[:below_rank_value]}}
+      end
+      if options[:rank].present?
+        filters << {term: {"ranks.rank" => options[:rank]}}
+      end
+      if options[:kingdom].present?
+        filters << {term: {"kingdom" => options[:kingdom]}}
+      end
+      pp filters
+      
+      
+      # "bool" : {
+      #   "should" : [
+      #      { "term" : {"price" : 20}},
+      #      { "term" : {"productID" : "XHDK-A-1293-#fJ3"}}
+      #   ],
+      #
+      
+      
+      
+      puts "options:"
+      pp options
+      
+      filter = { bool: { must: filters}}
 
+      puts "filter:"
+      pp filter
+            
       # setup empty search definition
       @search_definition = {
+        from: options[:from],
+        size: options[:size],
         query: {},
-        filter: {},
+        filter: filter,
         highlight: {},
       }
       # query
@@ -112,7 +163,8 @@ module Searchable
               { multi_match: {
                   query: query,
                   # limit which fields to search, or boost here:
-                  fields: [ "scientific_name", "common_names.name" ]
+                  fields: [ "scientific_name", "common_names.name" ],
+                  operator: :and
                 }
               }
             ]

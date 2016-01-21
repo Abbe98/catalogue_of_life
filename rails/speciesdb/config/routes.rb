@@ -13,7 +13,7 @@ Rails.application.routes.draw do
     get 'es_new', on: :collection
   end
   
-  
+  resources :docs, :only => [:index], :controller => :docs
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

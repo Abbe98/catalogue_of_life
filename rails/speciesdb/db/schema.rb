@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20151231111159) do
     t.string   "slug",                  limit: 255
     t.integer  "col_taxon_id",          limit: 4,                     null: false
     t.integer  "parent_id",             limit: 4
+    t.integer  "taxonomy_id",           limit: 4,                     null: false
     t.string   "type",                  limit: 255, default: "Taxon", null: false
     t.datetime "created_at",                                          null: false
     t.datetime "updated_at",                                          null: false
@@ -51,6 +52,7 @@ ActiveRecord::Schema.define(version: 20151231111159) do
 
   add_index "taxa", ["parent_id"], name: "index_taxa_on_parent_id", using: :btree
   add_index "taxa", ["slug"], name: "index_taxa_on_slug", unique: true, using: :btree
+  add_index "taxa", ["taxonomy_id"], name: "index_taxa_on_taxonomy_id", using: :btree
 
   create_table "taxonomies", force: :cascade do |t|
     t.string   "slug",       limit: 255, null: false

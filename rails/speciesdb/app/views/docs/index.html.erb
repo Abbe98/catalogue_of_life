@@ -1,0 +1,35 @@
+
+<h2>REST-API for Biocaching</h2>
+
+<p>This page documents the Biocaching REST-based APIs.</p>
+
+<h3>Taxa</h3>
+The Taxa services gives access to the species database: 
+
+<h4>GET /taxa?format=json</h4>
+<p>Retrieves taxa in json format.</p>
+
+<h5>Optional parameters</h5>
+<div class="row">
+  <div class="col-xs-1"></div>
+  <div class="col-xs-10">
+    <dl >
+        <dt>from</dt>
+        <dd>Return a subset of the taxa, start at 'from', default = 0</dd>
+        <dt>size</dt>
+        <dd>Return 'size' number of taxa, default = 10</dd>
+        <dt>rank</dt>
+        <dd>return only taxa with a specified rank, default = all<br/>available ranks are: "kingdoms", "genus", "species", "not assigned"</dd>
+        <dt>below_rank, below_rank_value</dt>
+        <dd>return only taxa below a certain rank in the taxonomy. E. g.: to only retrieve birds add parameters: below_rank=class and below_rank_value=aves</dd>
+        <dt>term</dt>
+        <dd>Search for the term in a taxa's common name and scientific name</dd>
+    </dl>
+  </div>
+</div>
+<h5>Examples</h5>
+
+
+
+<h4>GET /taxa/&lt;id&gt;?format=json</h4>
+<p>Retrieves a single species, given it's id.</p>

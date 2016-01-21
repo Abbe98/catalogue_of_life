@@ -5,6 +5,7 @@ class CreateTaxa < ActiveRecord::Migration
       t.string :slug
       t.integer :col_taxon_id, null: false
       t.references :parent, index: true
+      t.references :taxonomy, index: true, null: false
       t.string :type, null: false, default: "Taxon"
       t.timestamps null: false
     end

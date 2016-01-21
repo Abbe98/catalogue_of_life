@@ -131,6 +131,19 @@ To browse the database:
     +------+----------+------------------------+--------------+-------------+---------------------+------+------------+-----------------+
     2 rows in set (0.00 sec)
     
+
+
+Gorilla:
+
+    select * from common_name, common_name_element, taxon, taxonomic_rank, scientific_name_element, taxon_name_element 
+      where name like '%gorilla%' 
+        and common_name.common_name_element_id = common_name_element.id
+        and taxon.id = common_name.taxon_id 
+        and scientific_name_element.id = taxon_name_element.scientific_name_element_id
+        and taxonomic_rank.id = taxon.taxonomic_rank_id
+        and taxon_name_element.taxon_id = taxon.id;
+
+
 Arter i løvetannfamilien: 
 
     select s.name_element, tne.taxon_id, tr.rank from scientific_name_element s, taxon_name_element tne, taxon t, taxonomic_rank tr where s.id = tne.scientific_name_element_id and t.id = tne.taxon_id and tr.id = t.taxonomic_rank_id and tne.parent_id = 22102505 order by s.name_element;

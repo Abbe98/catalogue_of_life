@@ -3,6 +3,9 @@ class Taxon < ActiveRecord::Base
   
   has_many :children, class_name: "Taxon", foreign_key: "parent_id"
   belongs_to :parent, class_name: "Taxon"  
+  belongs_to :taxonomy
+  
+  include Searchable
   
   has_many :common_names, as: :nameable, class_name: 'Name'
   # trenger ikke denne likevel, siden taxon har bare en assosiasjon til Name
@@ -18,6 +21,16 @@ class Taxon < ActiveRecord::Base
   #has_and_belongs_to_many :ranks
   has_many :rank_taxon
   has_many :ranks, :through => :rank_taxon
+
+
+  #scope :genus, -> { where rank.name = "genus" and rank.language_iso = "eng" }
+
+  scope :genuses, -> { includes(:ranks).where(:ranks=>{rank: "genus", language_iso: "eng"})}
+  scope :species, -> { includes(:ranks).where(:ranks=>{rank: "species", language_iso: "eng"})}
+  scope :kingdoms, -> { includes(:ranks).where(:ranks=>{rank: "kingdom", language_iso: "eng"})}
+  scope :subspecies, -> { includes(:ranks).where(:ranks=>{rank: ["subspecies", "not assigned"], language_iso: "eng"})}
+  scope :one, -> { where slug: 'soriculus-nigrescens' }
+
   
   #trenger ikke denne likevel:
   # has_many :ranks,  -> { where nameable_type: 'Taxon', nameable_subtype: 'ranks'}, {class_name: 'Name', foreign_key: 'nameable_id', dependent: :destroy} do
@@ -37,13 +50,31 @@ class Taxon < ActiveRecord::Base
   #
   # end 
 
+  def scientific_name
+    taxon_scientific_name
+  end
+  
   def common_name(language_iso)
     common_names.select{|name| name.language_iso == language_iso}.first.name
+  end
+  
+  def taxonomic_ranks
+    this = {"#{ranks.select{|name| name.language_iso == 'eng'}.first.rank}" => taxon_scientific_name}
+    parent.present? ? this.merge(parent.taxonomic_ranks) : this
   end
   
   def genus_scientific_name
     rank = ranks.select{|name| name.language_iso == 'eng'}.first
     rank.rank == "genus" ? taxon_scientific_name : (parent_id.present? ? parent.genus_scientific_name : "UNKNOWN GENUS")   
+  end
+  
+  def kingdom
+    rank = ranks.select{|name| name.language_iso == 'eng'}.first
+    if rank.rank == "kingdom"
+      return taxon_scientific_name
+    elsif parent.present?
+      return parent.kingdom
+    end
   end
       
 end
