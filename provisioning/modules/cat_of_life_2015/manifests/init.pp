@@ -1,25 +1,25 @@
 class cat_of_life_2015 {
     
   file { 'downloads':
-    path => ['/home/vagrant/downloads'],
+    path => ['/home/bc/downloads'],
     ensure => 'directory',
-    owner => 'vagrant',
+    owner => 'bc',
     mode => 755,
-    group => 'vagrant'
+    group => 'bc'
   }
     
   exec { "get-col":
-    command => "wget http://www.catalogueoflife.org/services/res/col2015ac_linux.tar.gz -P /home/vagrant/downloads && tar xzf /home/vagrant/downloads/col2015ac_linux.tar.gz --directory /home/vagrant/downloads",
-    cwd => "/home/vagrant/downloads",
-    user => "vagrant",
+    command => "wget http://www.catalogueoflife.org/services/res/col2015ac_linux.tar.gz -P /home/bc/downloads && tar xzf /home/bc/downloads/col2015ac_linux.tar.gz --directory /home/bc/downloads",
+    cwd => "/home/bc/downloads",
+    user => "bc",
     timeout => 5000,
-    group => "vagrant",
-    creates => "/home/vagrant/downloads/col2015ac_linux.tar.gz",
+    group => "bc",
+    creates => "/home/bc/downloads/col2015ac_linux.tar.gz",
     require => File["downloads"]
   }
   
   exec { "secure-mariadb":
-    command => "/vagrant/provisioning/modules/mariadb/files/mysql-autosecure.sh hemmelig",
+    command => "/home/bc/catalogue_of_life/provisioning/modules/mariadb/files/mysql-autosecure.sh hemmelig",
     require => Service["mysql"],
     unless => "ls `which mysql_secure_installation`.ran"
   }
@@ -30,17 +30,17 @@ class cat_of_life_2015 {
   }
 
   exec {'import':
-      command => 'tar zxvf /home/vagrant/downloads/col2015ac.sql.tar.gz -C /home/vagrant/downloads && mysql -u root -phemmelig col2015ac < /home/vagrant/downloads/col2015ac.sql',
-      user => "vagrant",
-      group => "vagrant",
+      command => 'tar zxvf /home/bc/downloads/col2015ac.sql.tar.gz -C /home/bc/downloads && mysql -u root -phemmelig col2015ac < /home/bc/downloads/col2015ac.sql',
+      user => "bc",
+      group => "bc",
       timeout => 3600,
-      cwd => "/home/vagrant/downloads",
+      cwd => "/home/bc/downloads",
       require => [Service["mysql"], Exec["create-database"]],
-      creates => "/home/vagrant/downloads/col2015ac.sql"
+      creates => "/home/bc/downloads/col2015ac.sql"
   }
   
   exec {'unpack-app':
-      command => 'tar zxvf /home/vagrant/downloads/col2015ac_application.tar.gz -C /var/www/html ',
+      command => 'tar zxvf /home/bc/downloads/col2015ac_application.tar.gz -C /var/www/html ',
       require => [Package["httpd"], Exec["get-col"]],
       notify => Service["httpd"],
       creates => "/var/www/html/col2015ac"
