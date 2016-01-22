@@ -152,6 +152,7 @@ module Searchable
         from: options[:from],
         size: options[:size],
         query: {},
+        #sort: [{"common_names.name" => {order: :asc}}],
         filter: filter,
         highlight: {},
       }

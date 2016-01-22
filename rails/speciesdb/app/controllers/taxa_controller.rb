@@ -1,5 +1,6 @@
 
 require 'json'
+require 'pp'
 class TaxaController < ApplicationController
 
   respond_to :json, :html, :js

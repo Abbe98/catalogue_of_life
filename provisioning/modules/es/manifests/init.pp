@@ -12,7 +12,8 @@ class es {
     file {"/etc/elasticsearch/elasticsearch.yml":
       source => "puppet:///modules/es/elasticsearch.yml",
       require => Package["elasticsearch"],
-      notify => Service["elasticsearch"]
+      notify => Service["elasticsearch"],
+      group => "elasticsearch"
     }
     
     file {"/etc/yum.repos.d/elasticsearch.repo":

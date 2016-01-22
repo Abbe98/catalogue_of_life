@@ -10,4 +10,6 @@ class ApplicationController < ActionController::Base
 
   layout 'bootstrap_search'
   
+  http_basic_authenticate_with name: "bc", password: "oslo2015"
+  
 end

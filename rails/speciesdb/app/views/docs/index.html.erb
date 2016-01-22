@@ -28,7 +28,22 @@ The Taxa services gives access to the species database:
   </div>
 </div>
 <h5>Examples</h5>
-
+<div class="row">
+  <div class="col-xs-1"></div>
+  <div class="col-xs-10">
+    <dl >
+        <dt>Get the 5 first species in the mammalia class (mammals):</dt>
+        <dd><%=link_to taxa_url(format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia), 
+                       taxa_path(format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
+        <dt>Get the 5 next species in the mammalia class (mammals):</dt>
+        <dd><%=link_to taxa_url(format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia), 
+                       taxa_path(format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
+       <dt>Search for birds named something with "fody", return at most 10 results:</dt>
+       <dd><%=link_to taxa_url(format: :json, below_rank: :class, below_rank_value: :aves, term: "fody"), 
+              taxa_path(format: :json, below_rank: :class, below_rank_value: :aves, term: "fody")%></dd>
+    </dl>
+  </div>
+</div>
 
 
 <h4>GET /taxa/&lt;id&gt;?format=json</h4>
