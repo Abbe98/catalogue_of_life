@@ -32,6 +32,8 @@ Kan deretter logge på slik:
 
     $ ssh bc
 
+Oppretter også brukeren bc, med sudo rettigheter, og kopierer over /home/bjorn/.ssh/authorized keys
+
 ## Ikke logge inn med passord eller root
 
 Redigerer /etc/ssh/sshd_config og setter disse: 
@@ -112,8 +114,8 @@ Velger å også enable firewalld:
 Logget inn som bjorn på bc1: 
 
     $ git clone https://github.com/Biocaching/catalogue_of_life.git
-    $ sudo puppet apply catalogue_of_life/provisioning/manifests/server.pp \
-         --modulepath catalogue_of_life/provisioning/modules
+    $ cd catalogue_of_life
+    $ sudo puppet apply provisioning/manifests/server.pp --modulepath provisioning/modules
     
     
     

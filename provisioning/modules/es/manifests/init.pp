@@ -22,7 +22,7 @@ class es {
       
     package {["java-1.8.0-openjdk", "elasticsearch"]: 
        ensure => present, 
-       require => [Exec["es"], File["/etc/yum.repos.d/elasticsearch.repo"], File],
+       require => [Exec["es"], File["/etc/yum.repos.d/elasticsearch.repo"]],
        provider => 'yum'
    }
  
@@ -72,10 +72,10 @@ class es {
      require => File["/etc/systemd/system/kibana4.service"]
    }
    
-   Exec {"kibana-sense":
-     command => "/opt/kibana plugin --install elastic/sense",
+   exec {"kibana-sense":
+     command => "/opt/kibana/bin/kibana plugin --install elastic/sense",
      require => Service["kibana4"],
-     notify => "kibana4"
+     returns => [0, 70]
    }
        
 }

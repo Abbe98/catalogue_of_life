@@ -42,11 +42,19 @@ node default {
     ensure => present,
     require => Class["timezone"]
   }  
+  
+  file {"/etc/puppet/hiera.yml":
+    ensure => present
+  }
    
   
- include httpd 
- include mariadb
- include cat_of_life_2015
+  include httpd 
+  include mariadb
+  class { "cat_of_life_2015":
+    user => "bc",
+    group => "bc",
+    provdir => "/home/bc"
+  }
  # include rails
  # include es
  
