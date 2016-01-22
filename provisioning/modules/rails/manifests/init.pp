@@ -39,21 +39,23 @@ class rails ($mysql_root_pwd = 'hemmelig', $is_server = false) {
   # }
   
   if $is_server {  
-      file { "/etc/httpd/conf.d/speciesdb_prod.conf":
-           source => "puppet:///modules/rails/speciesdb_prod.conf",
-           mode => 644,
-           owner => root,
-           group => root,
-           require => Package["mod_passenger"],
-           notify => Service["httpd"],
-   } else {
-          file { "/etc/httpd/conf.d/speciesdb_dev.conf":
-               source => "puppet:///modules/rails/speciesdb_dev.conf",
-               mode => 644,
-               owner => root,
-               group => root,
-               require => Package["mod_passenger"],
-               notify => Service["httpd"],
+     file { "/etc/httpd/conf.d/speciesdb_prod.conf":
+       source => "puppet:///modules/rails/speciesdb_prod.conf",
+       mode => 644,
+       owner => root,
+       group => root,
+       require => Package["mod_passenger"],
+       notify => Service["httpd"],
+     }
+  } else {
+     file { "/etc/httpd/conf.d/speciesdb_dev.conf":
+       source => "puppet:///modules/rails/speciesdb_dev.conf",
+       mode => 644,
+       owner => root,
+       group => root,
+       require => Package["mod_passenger"],
+       notify => Service["httpd"],
+     }
   }
     
   file { "/etc/httpd/conf.modules.d/10-passenger.conf":
