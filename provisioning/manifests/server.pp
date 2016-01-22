@@ -43,7 +43,7 @@ node default {
     require => Class["timezone"]
   }  
   
-  file {"/etc/puppet/hiera.yml":
+  file {"/etc/puppet/hiera.yaml":
     ensure => present
   }
    
