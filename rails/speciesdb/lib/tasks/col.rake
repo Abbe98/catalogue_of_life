@@ -82,7 +82,7 @@ namespace :col do
   def new_taxon(taxon_scientific_name, taxon_id, rank, parent = nil)
       taxon = Taxon.find_or_initialize_by(col_taxon_id: taxon_id, taxon_scientific_name: taxon_scientific_name)
       taxon.parent = parent
-      taxon.taxonomy = parent.taxonomy
+      taxon.taxonomy = parent.taxonomy unless parent.nil?
       if taxon.ranks.empty?
         taxon.ranks << Rank.find_or_create_by(language_iso: "eng", rank: rank)
       end

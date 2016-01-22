@@ -37,8 +37,7 @@ node default {
   #   command => "yum clean all && yum makecache fast",
   #   require => [Class["timezone"],Exec["increase swap"]]
   # }
-  
-  package { ["epel-release", "wget", "curl", "make", "yum-utils", "dos2unix", "unzip", "lsof"]:
+  package { ["epel-release", "wget", "gcc-c++", "curl", "make", "yum-utils", "dos2unix", "unzip", "lsof"]:
     ensure => present,
     require => Class["timezone"]
   }  
@@ -55,7 +54,12 @@ node default {
     group => "bc",
     provdir => "/home/bc"
   }
- # include rails
- # include es
+  class {"rails":
+    is_server => true
+  }
+  class {"es":
+    user => "bc",
+    is_server => true
+  }
  
 }
