@@ -55,7 +55,10 @@ node default {
     group => "bc",
     provdir => "/home/bc"
   }
- # include rails
- # include es
+  include rails
+  class {"es":
+    user => "bc",
+    is_server => true
+  }
  
 }

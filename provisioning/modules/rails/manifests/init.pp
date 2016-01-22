@@ -1,6 +1,6 @@
 
 # http://docs.mongodb.org/manual/tutorial/install-mongodb-on-red-hat-centos-or-fedora-linux/
-class rails {
+class rails ($mysql_root_pwd = 'hemmelig') {
  
   
   package { ["ruby-devel", "rubygem-nokogiri", "mariadb-devel", "openssl", "openssl-devel", "zlib", "nodejs"]:
@@ -22,15 +22,8 @@ class rails {
 
   
   exec {'create-dbuser':
-      command => 'mysql -u root -phemmelig -e "grant all on *.* to \'speciesdb\'@\'localhost\' identified by \'passord\'"',
+      command => "mysql -u root -p${mysql_root_pwd} -e 'grant all on *.* to \"speciesdb\"@\"localhost\" identified by \"passord\"'",
       require => [Exec["secure-mariadb"]]
   }
 
-  # package { ["mysql2"]:
-  #   ensure => 'installed',
-  #   provider => gem,
-  #   require => Package["rails", "mariadb-devel", "openssl",  "openssl-devel", "zlib"]
-  # }
-  
-  
 }

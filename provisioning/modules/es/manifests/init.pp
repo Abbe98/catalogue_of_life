@@ -1,5 +1,5 @@
 
-class es {
+class es($user="vagrant", $is_server=false) {
   
     exec {"es":
       command => "rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch"
@@ -37,12 +37,13 @@ class es {
    }
 
    
-   
-   exec { "allow access to port 9200":
-     command => "firewall-cmd --permanent --zone=public --add-port=9200/tcp && firewall-cmd --reload",
-   }
-   exec { "allow access to port 5601":
-     command => "firewall-cmd --permanent --zone=public --add-port=5601/tcp && firewall-cmd --reload",
+   unless $is_server {   
+     exec { "allow access to port 9200":
+       command => "firewall-cmd --permanent --zone=public --add-port=9200/tcp && firewall-cmd --reload",
+     }
+     exec { "allow access to port 5601":
+       command => "firewall-cmd --permanent --zone=public --add-port=5601/tcp && firewall-cmd --reload",
+     }
    }
    
    # Trenger ikke denne siden selinux er disabled
@@ -50,8 +51,8 @@ class es {
    #   command => "setsebool -P httpd_can_network_connect 1"
    # }
    exec { "get kibana":
-     command => "wget https://download.elastic.co/kibana/kibana/kibana-4.3.1-linux-x64.tar.gz -P /home/vagrant/downloads  && tar xzf /home/vagrant/downloads/kibana-4.3.1-linux-x64.tar.gz -C /opt",
-     cwd => "/home/vagrant",
+     command => "wget https://download.elastic.co/kibana/kibana/kibana-4.3.1-linux-x64.tar.gz -P /home/${user}/downloads  && tar xzf /home/${user}/downloads/kibana-4.3.1-linux-x64.tar.gz -C /opt",
+     cwd => "/home/${user}",
      timeout => 1800,
      unless => "ls /opt/kibana-4.3.1-linux-x64"
    }
