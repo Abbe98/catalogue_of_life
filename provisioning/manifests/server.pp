@@ -37,7 +37,7 @@ node default {
   #   command => "yum clean all && yum makecache fast",
   #   require => [Class["timezone"],Exec["increase swap"]]
   # }
-  package { ["epel-release", "wget", "gcc-c++", "curl", "make", "yum-utils", "dos2unix", "unzip", "lsof"]:
+  package { ["epel-release", "wget", "gcc-c++", "curl", "make", "yum-utils", "dos2unix", "unzip", "lsof", "pygpgme"]:
     ensure => present,
     require => Class["timezone"]
   }  
