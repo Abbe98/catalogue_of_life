@@ -1,12 +1,13 @@
 Rails.application.routes.draw do
 
-  resources :taxonomies
-    
-  resources :taxa, only: [:show, :index, :search] do
-      get 'search', on: :collection
-      post 'search', on: :collection
-      post 'es_search', on: :collection
-      get 'subtree', on: :member
+  resources :taxonomies do
+    get 'subtree', on: :member
+    resources :taxa, only: [:show, :index, :search] do
+        get 'search', on: :collection
+        post 'search', on: :collection
+        post 'es_search', on: :collection
+        get 'subtree', on: :member
+    end
   end
   
   resource :autocomplete, :only => [:new], :controller => :autocomplete, :defaults => { :format => 'json' } do
@@ -18,7 +19,7 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'taxa#index'
+  root 'taxonomy/col/taxa#index'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

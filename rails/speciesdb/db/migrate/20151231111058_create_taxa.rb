@@ -5,9 +5,11 @@ class CreateTaxa < ActiveRecord::Migration
       t.string :slug
       t.integer :col_taxon_id, null: false
       t.references :parent, index: true
+      t.references :source_database, index: true
       t.references :taxonomy, index: true, null: false
       t.string :type, null: false, default: "Taxon"
       t.timestamps null: false
+      
     end
     create_table :ranks do |t|
       t.string :rank, null: false
@@ -19,6 +21,7 @@ class CreateTaxa < ActiveRecord::Migration
       t.belongs_to :rank, index: true
     end
     # mulig at denne ikke virker for andre databaser enn MySQL, siden slug kan være null
-    add_index :taxa, [:slug], :unique => true
+    add_index :taxa, :slug, :unique => true
+    #add_index :taxa, :col_taxon_id, :unique => true
   end
 end
