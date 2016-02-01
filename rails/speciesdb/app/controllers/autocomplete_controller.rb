@@ -31,8 +31,12 @@ class AutocompleteController < ApplicationController
   def es_new
     pp params
     puts "new ES search"
+    
+    taxonomy = Taxonomy.find(params[:taxonomy_id])
+    options = {taxonomy_slug: taxonomy.slug}
 
-    es_result = Taxon.search params[:term]
+    es_result = Taxon.search(params[:term], options)
+    
     es_result.results.each do |res|
       puts res.highlight.inspect
       puts res.highlight.scientific_name if res.highlight.scientific_name.present?

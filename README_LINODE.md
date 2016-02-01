@@ -95,7 +95,7 @@ Booter og sjekker når den kommer opp at reglene er i bruk:
 
     $ sudo iptables -L
 
-Velger å også enable firewalld: 
+Velger å også enable firewalld (brukes i puppet-modulene til å åpne porter): 
 
     $ sudo systemctl start firewalld
     $ sudo systemctl enable firewalld
@@ -116,11 +116,68 @@ Logget inn som bjorn på bc1:
     $ git clone https://github.com/Biocaching/catalogue_of_life.git
     $ cd catalogue_of_life
     $ sudo puppet apply provisioning/manifests/server.pp --modulepath provisioning/modules
-    
-    
-    
-Fra egen laptop: 
 
-    $ pwd
-    /Users/bjorn/Documents/projects/biocaching
-    $ rsync -av catalogueoflife bjorn@bc:.
+Konfigurere Rails-applikasjonen: 
+
+    $ bundle install
+    $ rake db:create
+    $ RAILS_ENV=production rake db:create
+    $ rake db:migrate
+
+Lag secret-key med rake: 
+
+    $ rake secret
+
+Legg til i ~/.bash_profile: 
+
+    export SECRET_KEY_BASE="a315e13f71b9d8cf976b665857f287a7ad0f09c261aee74dfb992b6b5576bdc37a699f65475bd9bed7a97fb6ffc73c6a5933a933a3b769b69ae82864363f2a9b"_
+    export SPECIESDB_DATABASE_PASSWORD=<passord>
+    export RAILS_ENV=production
+
+(husk å lagre passordet i keepass)
+
+Logg ut og inn så verdiene blir satt. 
+
+Importere data fra COL (alle kingdoms og så chordata (ryggstrengdyr)): 
+
+    $ rake col:import_top_levels
+    $ rake col:import[22032976]
+
+Opprette indeks i Elasticsearch (får feilmelding første gang denne kjøres): 
+
+    $ ./scripts/re_create_es_index.sh 
+
+Indeksere ett artsnavn i Elasticsearch:
+
+    $ rake es:import_one
+
+Indeksere alle artsnavn i Elasticsearch: 
+
+    $ rake es:import_all
+
+For å kunne kjøre i passenger, må det settes rettigheter: 
+
+    $ cd /home
+    $ chmod a+rx bc
+    $ cd
+    $ chmod -R a+rx catalogue_of_life
+
+### Autentisering
+
+Legger til basic authentication ved å legge til i /etc/httpd/conf.d/speciesdb_prod.conf:
+
+    AuthType Basic
+    AuthName "Authentication Required"
+    AuthUserFile "/etc/.htpasswd"
+    Require valid-user
+
+Og kommenterer ut "Require all granted" nederst
+
+Og lager passord: 
+
+    sudo htpasswd -c /etc/.htpasswd bc
+(Passord: "Oslo2016")
+
+Kan kalle tjenesten slik: 
+
+    $ curl --user bc:Oslo2016 "http://api.biocaching.com:81/taxa?format=json&term=gorilla&size=2"

@@ -3,7 +3,7 @@
       <li class="list-group-item">
         <!--span class="badge">count</span-->        
         <span id=<%="taxon_link_#{taxon.id}"%>>
-            <%="#{taxon.ranks.first.rank}: "%><%=link_to taxon.taxon_scientific_name, subtree_taxon_path(taxon.id), remote: true%>
+            <%="#{taxon.ranks.first.rank}: "%><%=link_to taxon.taxon_scientific_name, subtree_taxonomy_taxon_path(@taxonomy, taxon), remote: true%>
         </span>
         <ul id=<%="taxon_ul_#{taxon.id}"%>></ul>
       </li>

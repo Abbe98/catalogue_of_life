@@ -9,5 +9,5 @@ if ( !$( "#close_subtree_taxon_<%=@taxon.id%>" ).length ) {
   $("#taxon_link_<%=@taxon.id%>").append(jQuery(item).click(clear).css({cursor:'pointer', display:'inline-block', width:'1em'}));
 }
 
-$("#taxon_ul_<%=@taxon.id%>").html('<%= escape_javascript(render partial: "subtree", locals: {taxa: @taxon.children}) %>');
+$("#taxon_ul_<%=@taxon.id%>").html('<%= escape_javascript(render partial: "subtree", locals: {taxa: @taxon.children.order(:taxon_scientific_name)}) %>');
 //alert($("#taxon_div_<%=@taxon.id%>"));

@@ -1,0 +1,14 @@
+<ul class="list-group">
+    <% for t in taxonomies do%>
+      <li class="list-group-item">
+        <!--span class="badge">count</span-->        
+        <%=render partial: "search_form", locals: {taxonomy: t}%>
+        <span id=<%="taxonomy_link_#{t.id}"%>>
+            <%=link_to t.product_name, taxonomy_taxa_path(t.id), remote: true%>
+        </span>   
+        <ul id=<%="taxonomy_ul_#{t.id}"%>>
+        </ul>
+
+      </li>
+    <% end %>
+</ul>

@@ -105,13 +105,23 @@ module Searchable
     #
     def as_indexed_json(options={})
       hash = self.as_json(only: [:taxon_scientific_name, :slug, :col_taxon_id, :id, :parent_id], 
-                          methods: [:scientific_name, :kingdom, :taxonomic_ranks],
+                          methods: [:scientific_name, :kingdom, :taxonomic_ranks, :source],
                           include: { common_names:{only: [:name, :language_iso]},
                                      ranks:       {only: [:rank, :language_iso]},
                                      taxonomy: {only: :slug}})
       #hash['species'] = self.species.map(&:title)
       hash
     end
+    
+    def self.build_rank_filter(ranks, language_iso)
+      array = []
+      for r in ranks do
+        array << { bool: { must: [{ term: {"ranks.rank" => r}}, {term: {"ranks.language_iso" => language_iso}}]}}
+      end
+      array
+    end
+    
+    
     
     def self.search(query, options={})
       #options ||= {}
@@ -127,6 +137,35 @@ module Searchable
       if options[:kingdom].present?
         filters << {term: {"kingdom" => options[:kingdom]}}
       end
+      if options[:taxonomy_slug].present?
+        filters << {term: {"taxonomy.slug" => options[:taxonomy_slug]}}
+      end
+      
+      filters << {bool: { should: build_rank_filter(RANKS_FOR_SEARCH, "eng")}}
+      
+      #filter for å kun søke i bestemte nivå:
+=begin      
+      "bool" : {
+                "should" : [
+                      {
+                        "bool" : {
+                          "must" : [
+                              {"term" : {"ranks.rank" : "phylum"}},
+                              {"term" : {"ranks.language_iso" : "eng"}}
+                            ]
+                        }
+                      }, 
+                      {
+                        "bool" : {
+                          "must" : [
+                              {"term" : {"ranks.rank" : "kingdom"}},
+                              {"term" : {"ranks.language_iso" : "eng"}}
+                            ]
+                        }
+                      }
+                  ]
+              }
+=end      
       pp filters
       
       
@@ -142,7 +181,7 @@ module Searchable
       puts "options:"
       pp options
       
-      filter = { bool: { must: filters}}
+      filter = filters.empty? ? {} : { bool: { must: filters}}
 
       puts "filter:"
       pp filter
@@ -185,6 +224,63 @@ module Searchable
       __elasticsearch__.search(@search_definition)
 
     end
+    
+    
+    def self.lookup(query, options={})
+      #options ||= {}
+      
+      term_filter = {}
+      filters = []
+      if options[:below_rank].present? && options[:below_rank_value].present?
+        filters << {term: {"taxonomic_ranks.#{options[:below_rank]}" => options[:below_rank_value]}}
+      end
+      if options[:rank].present?
+        filters << {term: {"ranks.rank" => options[:rank]}}
+      end
+      if options[:kingdom].present?
+        filters << {term: {"kingdom" => options[:kingdom]}}
+      end
+      if options[:parent_id].blank?
+        filters << {missing: {"field" => "parent_id"}}
+      else
+        filters << {term: {"parent_id" => options[:parent_id]}}
+        
+      end
+      pp filters
+      
+      
+      # "bool" : {
+      #   "should" : [
+      #      { "term" : {"price" : 20}},
+      #      { "term" : {"productID" : "XHDK-A-1293-#fJ3"}}
+      #   ],
+      #
+      
+      
+      
+      puts "options:"
+      pp options
+      
+      filter = { bool: { must: filters}}
+
+      puts "filter:"
+      pp filter
+            
+      # setup empty search definition
+      @search_definition = {
+        from: options[:from],
+        size: options[:size],
+        query: {match_all: {}},
+        #sort: [{"common_names.name" => {order: :asc}}],
+        filter: filter,
+        highlight: {},
+      }
+      
+      # execute Elasticsearch search
+      __elasticsearch__.search(@search_definition)
+
+    end
+
 
     private
 

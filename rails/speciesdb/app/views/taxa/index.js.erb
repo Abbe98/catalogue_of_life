@@ -1,0 +1,12 @@
+
+var clear = function() {
+  jQuery(this).parent().parent().children('ul').empty();
+  jQuery(this).remove();
+}
+
+item = '<span id="close_subtree_taxonomy_<%=@div_id%>">-</span>'
+if ( !$( "#close_subtree_taxon_<%=@div_id%>" ).length ) {
+  $("#taxonomy_link_<%=@div_id%>").append(jQuery(item).click(clear).css({cursor:'pointer', display:'inline-block', width:'1em'}));
+}
+
+$("#taxonomy_ul_<%=@div_id%>").html('<%= escape_javascript(render partial: "subtree", locals: {taxa: @taxa.order(:taxon_scientific_name)}) %>');

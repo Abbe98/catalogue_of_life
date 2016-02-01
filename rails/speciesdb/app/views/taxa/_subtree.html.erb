@@ -4,9 +4,9 @@
       <span id=<%="taxon_link_#{taxon.id}"%>>      
         <%="#{taxon.ranks.first.rank}: "%>
         <% if taxon.is_a? Species %>
-          <p><%="%s (%s)" % [taxon.common_name("eng"), taxon.binomial_name]%> </p>
+          <p><%="%s (%s)" % [taxon.common_name("eng"), taxon.scientific_name]%> </p>
         <% else %>
-          <%=link_to taxon.taxon_scientific_name, subtree_taxon_path(taxon.id), remote: true%>
+          <%=link_to taxon.taxon_scientific_name, subtree_taxonomy_taxon_path(@taxonomy, taxon), remote: true%>
         <% end %>
       </span>
       <ul id=<%="taxon_ul_#{taxon.id}"%>></ul>

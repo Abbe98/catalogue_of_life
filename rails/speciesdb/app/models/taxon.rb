@@ -5,6 +5,8 @@ class Taxon < ActiveRecord::Base
   belongs_to :parent, class_name: "Taxon"  
   belongs_to :taxonomy
   
+  belongs_to :source_database
+  
   include Searchable
   
   has_many :common_names, as: :nameable, class_name: 'Name'
@@ -28,7 +30,7 @@ class Taxon < ActiveRecord::Base
   scope :genuses, -> { includes(:ranks).where(:ranks=>{rank: "genus", language_iso: "eng"})}
   scope :species, -> { includes(:ranks).where(:ranks=>{rank: "species", language_iso: "eng"})}
   scope :kingdoms, -> { includes(:ranks).where(:ranks=>{rank: "kingdom", language_iso: "eng"})}
-  scope :subspecies, -> { includes(:ranks).where(:ranks=>{rank: ["subspecies", "not assigned"], language_iso: "eng"})}
+  scope :infraspecific, -> { includes(:ranks).where(:ranks=>{rank: INFRASPECIFIC_RANKS, language_iso: "eng"})}
   scope :one, -> { where slug: 'soriculus-nigrescens' }
 
   
@@ -55,7 +57,8 @@ class Taxon < ActiveRecord::Base
   end
   
   def common_name(language_iso)
-    common_names.select{|name| name.language_iso == language_iso}.first.name
+    names = common_names.select{|name| name.language_iso == language_iso}
+    names.empty? ? "" : names.first.name
   end
   
   def taxonomic_ranks
@@ -76,5 +79,9 @@ class Taxon < ActiveRecord::Base
       return parent.kingdom
     end
   end
-      
+  
+  def source
+    {taxonomy: taxonomy.product_name, source_database: source_database.as_json(except: [:updated_at, :created_at])}
+  end
+  
 end

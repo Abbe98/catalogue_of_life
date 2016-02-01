@@ -1,0 +1,53 @@
+
+<% content_for :footer do %>
+    <script type="text/javascript">
+    $(function() { 
+    jQuery.ajaxSetup({
+     'beforeSend': function(xhr) {xhr.setRequestHeader("Accept", "text/javascript")}
+      });
+
+ // Below is the name of the textfield that will be autocomplete    
+
+        $('#es_query_q').autocomplete({
+            minLength: 2,
+            // funker ikke for genereres når siden lages, ikke når autocomplete utføres...
+            //source: '<%= new_autocomplete_path(:js) %>?bar=' + $('#query_server').val(),
+            //source: '<%= new_autocomplete_path(:json) %>?pictures=' + $('#query_with_pictures_only').attr('checked') ,
+            source: '<%= es_new_autocomplete_path(:json, {:taxonomy_id => taxonomy.id}) %>',
+            focus: function(event, ui) {
+               $('#es_query_q').val(ui.item[0]);
+               return false;
+            },
+            select: function(event, ui) {
+               $('#es_query_q').val(ui.item[0]);
+               //alert(ui.item[0]);
+               return false;
+            }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+              return jQuery('<li>').data('ui-autocomplete-item', item ).append('<a href=\'/taxa/' + item[3] + '\' data-remote="true"><span>'+ item[1] + '</span>&nbsp;<span class="scientific_name">('+ item[2] + ')</span>' + '</a>').appendTo(ul);
+          };
+          
+  });
+    </script>
+
+<% end %>
+
+<div id="search_form">
+  <div class="row">
+  <div class="col-xs-6">
+    <%= form_for @query, :url => es_search_taxonomy_taxa_path(taxonomy), :html => {:id=> "es_search", :class => 'well form-inline' } do |form| %>
+     <!-- http://stackoverflow.com/questions/18539711/input-widths-on-bootstrap-3
+          http://jsfiddle.net/MeycD/     -->
+             <!--input type="text" class="form-control" placeholder=".col-xs-4"-->
+       <%= label_tag(:q, "ES search:") %>
+       <%= form.text_field :q, {:class => "form-control", :placeholder=> "search for species...", :id => "es_query_q"} %> 
+       <%= form.submit :name => "search", :value => "Search", :class =>"btn btn-default" %>
+    <% end %>  
+  </div>  
+  </div>
+</div>
+
+
+  
+  <div id="taxon_div">
+  </div>

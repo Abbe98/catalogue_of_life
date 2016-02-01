@@ -11,18 +11,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151231111159) do
+ActiveRecord::Schema.define(version: 20160129150428) do
 
-  create_table "names", force: :cascade do |t|
-    t.string   "name",          limit: 255, null: false
-    t.string   "language_iso",  limit: 3,   null: false
-    t.integer  "nameable_id",   limit: 4,   null: false
-    t.string   "nameable_type", limit: 255, null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+  create_table "error_log", force: :cascade do |t|
+    t.text     "message",    limit: 65535
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
-  add_index "names", ["nameable_id", "nameable_type", "language_iso"], name: "unique_names_per_type_languages", unique: true, using: :btree
+  create_table "names", force: :cascade do |t|
+    t.string   "name",          limit: 255,                 null: false
+    t.string   "language_iso",  limit: 3,   default: "und"
+    t.string   "country_iso",   limit: 3
+    t.integer  "source_id",     limit: 4
+    t.integer  "nameable_id",   limit: 4,                   null: false
+    t.string   "nameable_type", limit: 255,                 null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+  end
+
+  add_index "names", ["source_id"], name: "index_names_on_source_id", using: :btree
 
   create_table "ranks", force: :cascade do |t|
     t.string   "rank",         limit: 255, null: false
@@ -39,11 +47,29 @@ ActiveRecord::Schema.define(version: 20151231111159) do
   add_index "ranks_taxa", ["rank_id"], name: "index_ranks_taxa_on_rank_id", using: :btree
   add_index "ranks_taxa", ["taxon_id"], name: "index_ranks_taxa_on_taxon_id", using: :btree
 
+  create_table "source_databases", force: :cascade do |t|
+    t.string   "name",                limit: 255
+    t.string   "authors_and_editors", limit: 255
+    t.string   "uri",                 limit: 255
+    t.string   "uri_scheme",          limit: 255
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+  end
+
+  create_table "sources", force: :cascade do |t|
+    t.string   "name",       limit: 255, null: false
+    t.string   "slug",       limit: 255, null: false
+    t.string   "version",    limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
   create_table "taxa", force: :cascade do |t|
     t.string   "taxon_scientific_name", limit: 255,                   null: false
     t.string   "slug",                  limit: 255
     t.integer  "col_taxon_id",          limit: 4,                     null: false
     t.integer  "parent_id",             limit: 4
+    t.integer  "source_database_id",    limit: 4
     t.integer  "taxonomy_id",           limit: 4,                     null: false
     t.string   "type",                  limit: 255, default: "Taxon", null: false
     t.datetime "created_at",                                          null: false
@@ -52,12 +78,14 @@ ActiveRecord::Schema.define(version: 20151231111159) do
 
   add_index "taxa", ["parent_id"], name: "index_taxa_on_parent_id", using: :btree
   add_index "taxa", ["slug"], name: "index_taxa_on_slug", unique: true, using: :btree
+  add_index "taxa", ["source_database_id"], name: "index_taxa_on_source_database_id", using: :btree
   add_index "taxa", ["taxonomy_id"], name: "index_taxa_on_taxonomy_id", using: :btree
 
   create_table "taxonomies", force: :cascade do |t|
-    t.string   "slug",       limit: 255, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "slug",         limit: 255, null: false
+    t.string   "product_name", limit: 255, null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
 end

@@ -1,9 +1,14 @@
 require 'pp'
 
 namespace :es do
+
+  desc %{Index all taxa}
+  task :import_all, [] => :environment do |t, args|
+    Taxon.import
+  end  
   
   desc %{Index all species}
-  task :import_all, [] => :environment do |t, args|
+  task :import_species_levels, [] => :environment do |t, args|
     Taxon.import scope: :genuses
     Taxon.import scope: :species
     Taxon.import scope: :subspecies
