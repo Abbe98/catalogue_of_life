@@ -1,9 +1,7 @@
-class SubSpecies < Taxon
+class Infraspecific < Taxon
     
   def scientific_name
-    puts "subspecies:"
     name = "#{parent.scientific_name} #{taxon_scientific_name}"
-    puts name
     name
   end
   
