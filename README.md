@@ -199,15 +199,15 @@ Opprette Elasticsearch indeks:
     
     $ ./scripts/re_create_es_index.sh
 
-Importere data fra COL (alle kingdoms og så animalia, chordata og pattedyr (rekursivt)): 
+Importere data fra COL (alle kingdoms og så animalia og chordata): 
 
     $ rake col:import_top_levels && rake col:import[22032961] && rake col:import[22032967]
 
-Importere pattedyr, reptiler og fugler fra COL: 
+Importere (rekursivt) alle pattedyr, reptiler og fugler fra COL: 
 
-    $ rake col:import[22032977]
-    $ rake col:import[22033651]
-    $ rake col:import[22033189]
+    $ rake col:import[22032977,true]
+    $ rake col:import[22033651,true]
+    $ rake col:import[22033189,true]
 
 
 Indeksere ett artsnavn i Elasticsearch:
