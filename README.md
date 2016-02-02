@@ -201,7 +201,7 @@ Opprette Elasticsearch indeks:
 
 Importere data fra COL (alle kingdoms og så animalia og chordata): 
 
-    $ rake col:import_top_levels && rake col:import[22032961] && rake col:import[22032967]
+    $ rake col:import_top_levels && rake col:import[22032961] && rake col:import[22032976]
 
 Importere (rekursivt) alle pattedyr, reptiler og fugler fra COL: 
 
