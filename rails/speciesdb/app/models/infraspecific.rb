@@ -1,9 +1,14 @@
-class Infraspecific < Taxon
-    
+class Infraspecific < Species
+
+
+  include Searchable
+  include Elasticsearch::Model::Callbacks
+
   def scientific_name
     name = "#{parent.scientific_name} #{taxon_scientific_name}"
     name
   end
+  
   
 #  def binomial_name
     #"#{parent.genus_scientific_name} #{scientific_name}"

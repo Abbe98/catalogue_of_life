@@ -8,6 +8,7 @@ class Taxon < ActiveRecord::Base
   belongs_to :source_database
   
   include Searchable
+  include Elasticsearch::Model::Callbacks
   
   has_many :common_names, as: :nameable, class_name: 'Name'
   # trenger ikke denne likevel, siden taxon har bare en assosiasjon til Name
@@ -83,5 +84,7 @@ class Taxon < ActiveRecord::Base
   def source
     {taxonomy: taxonomy.product_name, source_database: source_database.as_json(except: [:updated_at, :created_at])}
   end
+  
+
   
 end

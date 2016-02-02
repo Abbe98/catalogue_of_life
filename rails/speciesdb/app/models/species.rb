@@ -1,12 +1,17 @@
 class Species < Taxon
   validates :slug, uniqueness: true, allow_nil: true
-  
+
+  #include Elasticsearch::Model
   include Searchable
+  include Elasticsearch::Model::Callbacks
+  #document_type "species"
+
     
   def scientific_name
     name = "#{parent.genus_scientific_name} #{taxon_scientific_name}"
     name
   end
+  
   #
   # def binomial_name
   #   #"#{parent.genus_scientific_name} #{scientific_name}"
