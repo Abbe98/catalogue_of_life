@@ -120,28 +120,45 @@ module Searchable
       end
       array
     end
-    
+
+    def self.build_language_filter(languages)
+      array = []
+      for l in languages do
+        array << { term: {"common_names.language_iso" => l}}
+      end
+      {bool: {should: array}}
+    end    
     
     
     def self.search(query, options={})
       #options ||= {}
-      
+      pp options[:languages]
       term_filter = {}
       filters = []
       if options[:below_rank].present? && options[:below_rank_value].present?
         filters << {term: {"taxonomic_ranks.#{options[:below_rank]}" => options[:below_rank_value]}}
       end
-      if options[:rank].present?
-        filters << {term: {"ranks.rank" => options[:rank]}}
-      end
+      # if options[:rank].present?
+      #   filters << {term: {"ranks.rank" => options[:rank]}}
+      # end
       if options[:kingdom].present?
         filters << {term: {"kingdom" => options[:kingdom]}}
       end
       if options[:taxonomy_slug].present?
         filters << {term: {"taxonomy.slug" => options[:taxonomy_slug]}}
       end
+      bool_filters = { should: build_rank_filter(RANKS_FOR_SEARCH, "eng")}
+#      filters << {bool: { should: build_rank_filter(RANKS_FOR_SEARCH, "eng")}}
       
-      filters << {bool: { should: build_rank_filter(RANKS_FOR_SEARCH, "eng")}}
+      if options[:languages].present? && !options[:languages].empty?
+        bool_filters.merge!({ must: build_language_filter(options[:languages])})
+      end
+
+      filters << {bool: bool_filters}
+      
+      pp filters
+      
+      
       #filter for å kun søke i bestemte nivå:
 =begin      
       "bool" : {
@@ -192,8 +209,14 @@ module Searchable
         query: {},
         #sort: [{"common_names.name" => {order: :asc}}],
         filter: filter,
-        highlight: {},
+        highlight: {},       
+        "_source" => ["id", "col_taxon_id", "scientific_name", "parent_id", "source", "ranks", "common_names"],
       }
+      
+      if options[:fields].present? && options[:fields] == "all"
+        @search_definition["_source"] = "*"
+      end
+      
       # query
       unless query.blank?
         @search_definition[:query] = {
@@ -272,9 +295,13 @@ module Searchable
         query: {match_all: {}},
         #sort: [{"common_names.name" => {order: :asc}}],
         filter: filter,
+        "_source" => ["id", "col_taxon_id", "scientific_name", "parent_id", "source", "ranks", "common_names"],
         highlight: {},
       }
       
+      if options[:fields].present? && options[:fields] == "all"
+        @search_definition["_source"] = "*"
+      end
       # execute Elasticsearch search
       __elasticsearch__.search(@search_definition)
 

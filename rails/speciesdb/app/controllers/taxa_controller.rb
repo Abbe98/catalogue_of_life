@@ -21,7 +21,8 @@ class TaxaController < ApplicationController
       format.json { 
         options = { from: params[:from], 
                     size: params[:size],
-                    parent_id: params[:parent_id]}
+                    parent_id: params[:parent_id],
+                    fields: params[:fields]}
         response = Taxon.lookup(params[:term], options)        
         #response =  Taxon.search("", {parent_id: 1,size:30})
         result = { total: response.results.total, 
@@ -46,10 +47,12 @@ class TaxaController < ApplicationController
       format.json { 
         options = { from: params[:from], 
                     size: params[:size],
-                    rank: params[:rank],
+                    # rank: params[:rank],
                     kingdom: params[:kingdom],
                     below_rank: params[:below_rank],
-                    below_rank_value: params[:below_rank_value]}
+                    below_rank_value: params[:below_rank_value],
+                    languages: params[:languages],
+                    fields: params[:fields]}
         response = Taxon.search(params[:term], options)        
         result = { total: response.results.total, 
                    max_score: response.results.max_score, 
