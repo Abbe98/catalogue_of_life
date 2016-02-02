@@ -5,3 +5,7 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+source = Source.create(slug: 'col', name: 'Catalogue of Life', version: COL_VERSION)
+taxonomy = Taxonomy.create(slug: 'col', 
+       product_name: 'Species 2000 & ITIS Catalogue of Life: 2013 Annual Checklist')
+taxonomy.names << Name.new(name: "Catalogue of Life", language_iso: "eng", source: source)
