@@ -185,20 +185,36 @@ Kjører kommando for å opprette databaser:
 
     $ rake db:create
 
-Kjører migreringer: 
+Kjører migreringer og seed: 
 
-    $ rake db:migrate
+    $ rake db:migrate && rake db:seed
 
-Importere data fra COL (alle kingdoms og så chordata (ryggstrengdyr)): 
 
-    $ rake col:import_top_levels
-    $ rake col:import[22032976]
+Evt slette databasen og opprette på nytt: 
+
+    $ rake db:rollback STEP=6
+    $ rake db:migrate && rake db:seed
+
+Opprette Elasticsearch indeks: 
+    
+    $ ./scripts/re_create_es_index.sh
+
+Importere data fra COL (alle kingdoms og så animalia, chordata og pattedyr (rekursivt)): 
+
+    $ rake col:import_top_levels && rake col:import[22032961] && rake col:import[22032967]
+
+Importere pattedyr, reptiler og fugler fra COL: 
+
+    $ rake col:import[22032977]
+    $ rake col:import[22033651]
+    $ rake col:import[22033189]
+
 
 Indeksere ett artsnavn i Elasticsearch:
 
     $ rake es:import_one
 
-Indeksere alle artsnavn i Elasticsearch: 
+Indeksere alle genus, species og div infraspecific i Elasticsearch: 
 
     $ rake es:import
 
