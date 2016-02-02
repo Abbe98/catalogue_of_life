@@ -140,7 +140,7 @@ namespace :col do
       #puts SPECIES_AND_INFRASPECIFIC_RANKS.include? rank
       # if at the level of species or below:
        if SPECIES_AND_INFRASPECIFIC_RANKS.include? rank
-         puts "will create a species or subspecies"
+         #puts "will create a species or subspecies"
    ###      english_name = get_english_name(taxon_id)
    ###       if english_name.present?
            #puts "has english name"
@@ -169,8 +169,8 @@ namespace :col do
                       
            begin
              result = t.save
-             puts "saved %s: %s" % [t.class.name, result]
-             puts
+             #puts "saved %s: %s" % [t.class.name, result]
+             #puts
              unless t.save 
                ErrorLog.create(message: t.errors.inspect)
              end
