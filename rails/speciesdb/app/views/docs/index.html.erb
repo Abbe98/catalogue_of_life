@@ -14,7 +14,7 @@ The Taxa services give access to the species database:
 
 <h4>GET /taxonomies/&lt;taxonomy_id&gt;/taxa?format=json</h4>
 <p>Retrieves taxa from a specific taxonomy in json format.</p>
-<p>Called with no extra parameters, this service returns the taxa at the highest level, i e "animalia", "plantae" and "fungi".</p>
+<p>Called with no extra parameters, this service returns the taxa with rank "kingdom"</p>
 
 
 <h5>Optional parameters</h5>
@@ -27,15 +27,26 @@ The Taxa services give access to the species database:
         <dt>size</dt>
         <dd>Return 'size' number of taxa, default = 10</dd>
         <dt>parent_id</dt>
-        <dd>Return taxa that are immediate children of another taxa.</dd>
+        <dd>Return taxa that are immediate children of another taxa. If omitted, return taxa on the highest level (the kingdoms: animalia, plantae and fungi)</dd>
+        <dt>fields</dt>
+        <dd>If omitted, only a subsets of the available fields are included in the response. Pass value "all" to have all available fields returned.</dd>
     </dl>
   </div>
 </div>
 
-<h4>GET /taxonomies/&lt;taxonomy_id&gt;/search?format=json</h4>
-<p>Retrieves taxa from a specific taxonomy in json format.</p>
-<p>Called with no extra parameters, this service returns the taxa at the highest level, i e "animalia", "plantae" and "fungi".</p>
+<h4>GET /taxonomies/&lt;taxonomy_id&gt;/taxa/search?format=json&term=&lt;search_term&gt;</h4>
+<p>Search for taxa by name from a specific taxonomy in json format.</p>
 
+<h5>Parameters</h5>
+<div class="row">
+  <div class="col-xs-1"></div>
+  <div class="col-xs-10">
+    <dl >
+        <dt>search_term</dt>
+        <dd>Search in scientific and common names of genus, species and infraspecific</dd>
+    </dl>
+  </div>
+</div>
 
 <h5>Optional parameters</h5>
 <div class="row">
@@ -46,12 +57,12 @@ The Taxa services give access to the species database:
         <dd>Return a subset of the taxa, start at 'from', default = 0</dd>
         <dt>size</dt>
         <dd>Return 'size' number of taxa, default = 10</dd>
-        <dt>rank</dt>
-        <dd>return only taxa with a specified rank, default = all<br/>available ranks are: "kingdoms", "genus", "species", "not assigned"</dd>
         <dt>below_rank, below_rank_value</dt>
         <dd>return only taxa below a certain rank in the taxonomy. E. g.: to only retrieve birds add parameters: below_rank=class and below_rank_value=aves</dd>
-        <dt>term</dt>
-        <dd>Search for the term in a taxa's common name and scientific name</dd>
+        <dt>fields</dt>
+        <dd>If omitted, only a subsets of the available fields are included in the response. Pass value "all" to have all available fields returned.</dd>
+        <dt>languages[]</dt>
+        <dd>Only return taxa that have common names in the specified languages (ISO 639-2). E.g. &languages[]=eng&languages[]=fra</dd>
     </dl>
   </div>
 </div>
