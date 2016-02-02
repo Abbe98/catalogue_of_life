@@ -34,25 +34,35 @@ The Taxa services give access to the species database:
   </div>
 </div>
 
-<h4>GET /taxonomies/&lt;taxonomy_id&gt;/taxa/search?format=json&term=&lt;search_term&gt;</h4>
-<p>Search, by name, for taxa in a specific taxonomy.</p>
-
-<h5>Parameters</h5>
+<h5>Examples</h5>
 <div class="row">
   <div class="col-xs-1"></div>
   <div class="col-xs-10">
     <dl >
-        <dt>term</dt>
-        <dd>Search for search_term in scientific and common names of taxa with rank genus, species and infraspecific</dd>
+        <dt>Get taxa without parents (the kingdoms):</dt>
+        <dd><%=link_to taxonomy_taxa_url(1, format: :json), taxonomy_taxa_path(1, format: :json)%></dd>
+        <dt>Get all 35 taxa in the animal kingdom:</dt>
+        <dd><%=link_to taxonomy_taxa_url(1, format: :json, parent_id: 1, size: 50), 
+                       taxonomy_taxa_path(1, format: :json, parent_id: 1, size: 50 )%></dd>
+        <dt>Get all taxa in the chordata phylum:</dt>
+        <dd><%=link_to taxonomy_taxa_url(1, format: :json, parent_id: 11, size: 50), 
+                       taxonomy_taxa_path(1, format: :json, parent_id: 11, size: 50 )%></dd>
     </dl>
   </div>
 </div>
+
+
+
+<h4>GET /taxonomies/&lt;taxonomy_id&gt;/taxa/search?format=json&term=&lt;search_term&gt;</h4>
+<p>Search, by name, for taxa in a specific taxonomy.</p>
 
 <h5>Optional parameters</h5>
 <div class="row">
   <div class="col-xs-1"></div>
   <div class="col-xs-10">
-    <dl >
+    <dl>
+        <dt>term</dt>
+        <dd>Search for search_term in scientific and common names of taxa with rank genus, species and infraspecific. If omitted, all taxa are returned.</dd>
         <dt>from</dt>
         <dd>Return a subset of the taxa, start at 'from', default = 0</dd>
         <dt>size</dt>
@@ -74,14 +84,14 @@ The Taxa services give access to the species database:
   <div class="col-xs-10">
     <dl >
         <dt>Get the 5 first species in the mammalia class (mammals):</dt>
-        <dd><%=link_to taxonomy_taxa_url(1, format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia), 
-                       taxonomy_taxa_path(1, format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
+        <dd><%=link_to search_taxonomy_taxa_url(1, format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia), 
+                       search_taxonomy_taxa_path(1, format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
         <dt>Get the 5 next species in the mammalia class (mammals):</dt>
-        <dd><%=link_to taxonomy_taxa_url(1, format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia), 
-                       taxonomy_taxa_path(1, format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
+        <dd><%=link_to search_taxonomy_taxa_url(1, format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia), 
+                       search_taxonomy_taxa_path(1, format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
        <dt>Search for birds named something with "fody", return at most 10 results:</dt>
-       <dd><%=link_to taxonomy_taxa_url(1, format: :json, below_rank: :class, below_rank_value: :aves, term: "fody"), 
-              taxonomy_taxa_path(1, format: :json, below_rank: :class, below_rank_value: :aves, term: "fody")%></dd>
+       <dd><%=link_to search_taxonomy_taxa_url(1, format: :json, below_rank: :class, below_rank_value: :aves, term: "fody"), 
+              search_taxonomy_taxa_path(1, format: :json, below_rank: :class, below_rank_value: :aves, term: "fody")%></dd>
     </dl>
   </div>
 </div>
