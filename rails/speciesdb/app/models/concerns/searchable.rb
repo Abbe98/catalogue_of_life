@@ -142,7 +142,6 @@ module Searchable
       end
       
       filters << {bool: { should: build_rank_filter(RANKS_FOR_SEARCH, "eng")}}
-      
       #filter for å kun søke i bestemte nivå:
 =begin      
       "bool" : {
