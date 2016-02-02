@@ -9,9 +9,9 @@ namespace :es do
   
   desc %{Index all species}
   task :import_species_levels, [] => :environment do |t, args|
-    Taxon.import scope: :genuses
+    #Taxon.import scope: :genuses
     Taxon.import scope: :species
-    Taxon.import scope: :subspecies
+    Taxon.import scope: :infraspecific
   end
   
   desc %{Index only one species}
