@@ -14,7 +14,7 @@ The Taxa services give access to the species database:
 
 <h4>GET /taxonomies/&lt;taxonomy_id&gt;/taxa?format=json</h4>
 <p>Retrieves taxa from a specific taxonomy in json format.</p>
-<p>Called with no extra parameters, this service returns the taxa with rank "kingdom"</p>
+<p>Called with no extra parameters, this service returns the taxa with rank "kingdom".</p>
 
 
 <h5>Optional parameters</h5>
@@ -29,7 +29,7 @@ The Taxa services give access to the species database:
         <dt>parent_id</dt>
         <dd>Return taxa that are immediate children of another taxa. If omitted, return taxa on the highest level (the kingdoms: animalia, plantae and fungi)</dd>
         <dt>fields</dt>
-        <dd>If omitted, only a subsets of the available fields are included in the response. Pass value "all" to have all available fields returned.</dd>
+        <dd>If omitted, only a subsets of the available fields are included in the response. Pass value "all" to have all available fields returned</dd>
     </dl>
   </div>
 </div>
@@ -62,7 +62,7 @@ The Taxa services give access to the species database:
   <div class="col-xs-10">
     <dl>
         <dt>term</dt>
-        <dd>Search for search_term in scientific and common names of taxa with rank genus, species and infraspecific. If omitted, all taxa are returned.</dd>
+        <dd>Search for search_term in scientific and common names of taxa with rank genus, species and infraspecific. If omitted, all taxa are returned</dd>
         <dt>from</dt>
         <dd>Return a subset of the taxa, start at 'from', default = 0</dd>
         <dt>size</dt>
@@ -70,7 +70,7 @@ The Taxa services give access to the species database:
         <dt>below_rank, below_rank_value</dt>
         <dd>return only taxa below a certain rank in the taxonomy. E. g.: to only retrieve birds add parameters: below_rank=class and below_rank_value=aves</dd>
         <dt>fields</dt>
-        <dd>If omitted, only a subsets of the available fields are included in the response. Pass value "all" to have all available fields returned.</dd>
+        <dd>If omitted, only a subsets of the available fields are included in the response. Pass value "all" to have all available fields returned</dd>
         <dt>languages[]</dt>
         <dd>Only return taxa that have common names in the specified languages (ISO 639-2). E.g. &languages[]=eng&languages[]=fra</dd>
     </dl>
@@ -84,11 +84,9 @@ The Taxa services give access to the species database:
   <div class="col-xs-10">
     <dl >
         <dt>Get the 5 first species in the mammalia class (mammals):</dt>
-        <dd><%=link_to search_taxonomy_taxa_url(1, format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia), 
-                       search_taxonomy_taxa_path(1, format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
+        <dd><%=link_to search_taxonomy_taxa_url(1, format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia), search_taxonomy_taxa_path(1, format: :json, from: 0, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
         <dt>Get the 5 next species in the mammalia class (mammals):</dt>
-        <dd><%=link_to search_taxonomy_taxa_url(1, format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia), 
-                       search_taxonomy_taxa_path(1, format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
+        <dd><%=link_to search_taxonomy_taxa_url(1, format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia),search_taxonomy_taxa_path(1, format: :json, from: 5, size: 5, below_rank: :class, below_rank_value: :mammalia)%></dd>
        <dt>Search for birds named something with "fody", return at most 10 results:</dt>
        <dd><%=link_to search_taxonomy_taxa_url(1, format: :json, below_rank: :class, below_rank_value: :aves, term: "fody"), 
               search_taxonomy_taxa_path(1, format: :json, below_rank: :class, below_rank_value: :aves, term: "fody")%></dd>
